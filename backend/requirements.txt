@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+langchain
+langchain-community
+chromadb
+pypdf
+tiktoken
+networkx
+python-dotenv
+litellm==1.102.1
+PyYAML>=6,<7
+google-auth>=2,<3

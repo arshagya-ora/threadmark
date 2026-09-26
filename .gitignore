@@ -1,0 +1,56 @@
+# Dependencies and package-manager caches
+node_modules/
+.venv/
+venv/
+env/
+.pip-cache/
+.npm-cache/
+.pnp.*
+.yarn/
+
+# Generated builds, caches, and test output
+.next/
+out/
+build/
+dist/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+/artifacts/
+
+# Local environment and credentials (commit only templates)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local application data
+/backend/data/
+/backend/uploads/
+chroma_db/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Logs, editor, and OS artifacts
+*.log
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~

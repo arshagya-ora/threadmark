@@ -1,0 +1,112 @@
+# Change the selected profiles, then restart the backend.
+# Only selected profiles need credentials. Store secrets in .env, not this file.
+active_profile: nvidia
+active_embedding_profile: nvidia
+# null reuses active_profile; set a profile name to use another model for extraction.
+graph_profile: null
+
+defaults:
+  max_tokens: 1024
+  request_timeout: 60
+  max_retries: 1
+
+graph_defaults:
+  max_tokens: 8192
+
+embedding_defaults:
+  request_timeout: 60
+  max_retries: 1
+  batch_size: 32
+
+profiles:
+  nvidia:
+    provider: nvidia_nim
+    model: meta/llama-3.1-8b-instruct
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.2
+    top_p: 0.7
+
+  openai:
+    provider: openai
+    model: ${OPENAI_MODEL}
+    api_key: ${OPENAI_API_KEY}
+
+  anthropic:
+    provider: anthropic
+    model: ${ANTHROPIC_MODEL}
+    api_key: ${ANTHROPIC_API_KEY}
+
+  gemini:
+    provider: gemini
+    model: ${GEMINI_MODEL}
+    api_key: ${GEMINI_API_KEY}
+
+  hosted:
+    provider: openai_compatible
+    model: ${HOSTED_MODEL}
+    base_url: ${HOSTED_BASE_URL}
+    api_key: ${HOSTED_API_KEY}
+
+  ollama:
+    provider: ollama
+    model: ${OLLAMA_MODEL}
+    base_url: http://localhost:11434
+
+  gcp:
+    provider: vertex_ai
+    model: ${VERTEX_MODEL}
+    project_id: ${GOOGLE_CLOUD_PROJECT}
+    location: ${GOOGLE_CLOUD_LOCATION}
+    # Uses application default credentials / attached service account.
+    # credentials_file: ./credentials/google-service-account.json
+
+  aws:
+    provider: bedrock
+    model: ${BEDROCK_MODEL}
+    region: ${AWS_REGION}
+    # Uses the AWS credential chain / attached role.
+    # aws_profile: development
+    # api_key: ${AWS_BEARER_TOKEN_BEDROCK}
+
+embedding_profiles:
+  nvidia:
+    provider: nvidia_nim
+    model: nvidia/nv-embed-v1
+    api_key: ${NVIDIA_API_KEY}
+    document_parameters:
+      input_type: passage
+    query_parameters:
+      input_type: query
+
+  openai:
+    provider: openai
+    model: ${OPENAI_EMBEDDING_MODEL}
+    api_key: ${OPENAI_API_KEY}
+    # dimensions: 1536  # Only if supported by the selected model.
+
+  hosted:
+    provider: openai_compatible
+    model: ${HOSTED_EMBEDDING_MODEL}
+    base_url: ${HOSTED_EMBEDDING_BASE_URL}
+    api_key: ${HOSTED_EMBEDDING_API_KEY}
+
+  ollama:
+    provider: ollama
+    model: ${OLLAMA_EMBEDDING_MODEL}
+    base_url: http://localhost:11434
+
+  gemini:
+    provider: gemini
+    model: ${GEMINI_EMBEDDING_MODEL}
+    api_key: ${GEMINI_API_KEY}
+
+  gcp:
+    provider: vertex_ai
+    model: ${VERTEX_EMBEDDING_MODEL}
+    project_id: ${GOOGLE_CLOUD_PROJECT}
+    location: ${GOOGLE_CLOUD_LOCATION}
+
+  aws:
+    provider: bedrock
+    model: ${BEDROCK_EMBEDDING_MODEL}
+    region: ${AWS_REGION}
