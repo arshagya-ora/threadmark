@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Threadmark · Runtime architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1360,
+      660
+    ]
+  },
+  "components": [
+    {
+      "id": "research-ui",
+      "type": "frontend",
+      "label": "Research workspace",
+      "sublabel": "Next.js · chat, graph, sources",
+      "pos": [
+        50,
+        290
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "document-api",
+      "type": "backend",
+      "label": "Research API",
+      "sublabel": "FastAPI · upload / ask",
+      "pos": [
+        380,
+        290
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "hybrid-context",
+      "type": "backend",
+      "label": "Research pipeline",
+      "sublabel": "Passages + NetworkX graph",
+      "pos": [
+        710,
+        290
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "model-services",
+      "type": "external",
+      "label": "Configured models",
+      "sublabel": "Answer · graph · embeddings",
+      "pos": [
+        1040,
+        290
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "document-files",
+      "type": "database",
+      "label": "Document catalog",
+      "sublabel": "PDFs · passages · graph JSON",
+      "pos": [
+        380,
+        70
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "vector-index",
+      "type": "database",
+      "label": "ChromaDB",
+      "sublabel": "Persistent document vectors",
+      "pos": [
+        710,
+        510
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "request-metrics",
+      "type": "database",
+      "label": "Request metrics",
+      "sublabel": "SQLite · feedback · latency",
+      "pos": [
+        380,
+        510
+      ],
+      "size": [
+        220,
+        76
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "BROWSER",
+      "wraps": [
+        "research-ui"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "LOCAL BACKEND · single user / one process",
+      "wraps": [
+        "document-api",
+        "hybrid-context",
+        "document-files",
+        "vector-index",
+        "request-metrics"
+      ],
+      "pad": 26
+    },
+    {
+      "kind": "security-group",
+      "label": "MODEL ENDPOINT BOUNDARY",
+      "wraps": [
+        "model-services"
+      ],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "id": "question-api",
+      "from": "research-ui",
+      "to": "document-api",
+      "label": "HTTP JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "retrieve-context",
+      "from": "document-api",
+      "to": "hybrid-context",
+      "label": "Question",
+      "variant": "emphasis"
+    },
+    {
+      "id": "generate-answer",
+      "from": "hybrid-context",
+      "to": "model-services",
+      "label": "Inference",
+      "variant": "emphasis"
+    },
+    {
+      "id": "save-documents",
+      "from": "document-api",
+      "to": "document-files",
+      "label": "Read / persist",
+      "variant": "default",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "search-vectors",
+      "labelAt": [820, 380],
+      "from": "hybrid-context",
+      "to": "vector-index",
+      "label": "Index / retrieve",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "record-metrics",
+      "labelAt": [490, 380],
+      "from": "document-api",
+      "to": "request-metrics",
+      "label": "Record requests",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "01 · Follow the evidence",
+      "items": [
+        "A question retrieves four document passages plus matching graph neighbors, then calls the answer model.",
+        "Answer text and numbered sources return through the API. The workspace opens source passages and the original PDF."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "02 · Prepare the library",
+      "items": [
+        "PDF ingestion validates and chunks text, persists embeddings, and extracts a graph from the opening 5,000 characters.",
+        "Chroma collections follow the embedding profile. Saved passages are re-indexed when that profile changes."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "03 · Know the boundaries",
+      "items": [
+        "The API has no user authentication. PDFs, catalog, vectors and metrics are local; provider keys stay in backend configuration.",
+        "Selected hosted or local models receive role-specific text. The bundled sample uses prepared answers without model calls."
+      ]
+    }
+  ]
+}

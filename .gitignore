@@ -54,3 +54,6 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# Archify browser-validation sidecars (curated previews are in docs/images)
+docs/architecture/*.visual-check.*
